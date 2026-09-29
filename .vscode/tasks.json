@@ -1,4 +1,5 @@
 {
+  "version": "2.0.0",
   "tasks": [
     {
       "type": "cppbuild",
@@ -7,10 +8,8 @@
       "args": [
         "-fdiagnostics-color=always",
         "-g",
-        "${workspaceFolder}\\source\\main.cpp",
-        "${workspaceFolder}\\source\\Aircraft.cpp",
-        "-I",
-        "${workspaceFolder}\\headers",
+        "-I${workspaceFolder}/headers",
+        "${workspaceFolder}/source/*.cpp",
         "-o",
         "${workspaceFolder}\\airForce.exe"
       ],
@@ -24,6 +23,5 @@
       },
       "detail": "Build AirForce"
     }
-  ],
-  "version": "2.0.0"
+  ]
 }
