@@ -8,3 +8,7 @@ Project::Project(string name, string desc, int numOfAircraft)
 int Project::getNumOfAircraft() const {
     return this->numOfAircraft;
 }
+
+string Project::getName() const {
+    return this->name;
+}
