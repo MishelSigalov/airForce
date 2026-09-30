@@ -221,7 +221,7 @@ void createReconProject(char basedOnScratch) {
     }
 }
 
-
+//create an Attack project, either based on a scratch project or from scratch
 void createAttackProject(char basedOnScratch) {
 	string name, desc, weaponry, coordinates, startTime, endTime;
 	int numOfAircraft = 0;
