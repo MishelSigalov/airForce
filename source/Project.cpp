@@ -12,3 +12,7 @@ int Project::getNumOfAircraft() const {
 string Project::getName() const {
     return this->name;
 }
+
+string Project::getDesc() const {
+    return this->desc;
+}
