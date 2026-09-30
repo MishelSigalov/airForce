@@ -22,6 +22,7 @@ void addAircraft();
 void addScratchProject();
 void createProject();
 void createReconProject(char basedOnScratch);
+void createAttackProject(char basedOnScratch);
 void printAllScratchProjects();
 void printAllReconProjects();
 
@@ -101,8 +102,9 @@ int runMenu() {
     return option;
 }
 
+// Function to add an aircraft by id, connected the first option in the main menu
 void addAircraft() {
-    int id;
+    int id = 0;
     cout << "Enter the aircraft ID: ";
     cin >> id;
     Aircraft newAircraft(id);
@@ -110,9 +112,10 @@ void addAircraft() {
     cout << "Aircraft with ID " << id << " added." << endl << endl;
 }
 
+// Function to add a scratch project, connected to the second option in the main menu
 void addScratchProject() {
     string name, desc, camera, flightCourse;
-    int numOfAircraft;
+    int numOfAircraft = 0;
 
     cout << "Enter project name: ";
     cin >> name;
@@ -130,6 +133,7 @@ void addScratchProject() {
     cout << "Scratch project added." << endl << endl;
 }
 
+// Functions to create a project (either Reconnaissance or Attack), connected to the third option in the main menu
 void createProject() {
     int projectType = 0;
     char basedOnScratch;
@@ -154,14 +158,15 @@ void createProject() {
     if (projectType == RECON_PROJECT) {
         createReconProject(basedOnScratch);
     } else if (projectType == ATTACK_PROJECT) {
-        // Implement Attack Project creation here
+        creat64eAttackProject(basedOnScratch);
     }
 }
 
+//create a Reconnaissance project, either based on a scratch project or from scratch
 void createReconProject(char basedOnScratch) {
     string name, desc, camera, flightCourse, startTime, endTime;
-    int numOfAircraft;
-    int scratchProjectIndex;
+    int numOfAircraft = 0;
+    int scratchProjectIndex = 0;
     vector<Aircraft> aircraftList;
 
     if (basedOnScratch == 'y') {
@@ -181,6 +186,7 @@ void createReconProject(char basedOnScratch) {
             }
         } while (scratchProjectIndex < 1 || scratchProjectIndex > maxIndex);
 
+		//-1 because the user sees a 1-based index, but the vector is 0-based
         ScratchProject selectedScratchProject = scratchProjects[scratchProjectIndex - 1];
 
         cout << "Enter flight course: ";
@@ -215,6 +221,70 @@ void createReconProject(char basedOnScratch) {
     }
 }
 
+
+void createAttackProject(char basedOnScratch) {
+	string name, desc, weaponry, coordinates, startTime, endTime;
+	int numOfAircraft = 0;
+	int scratchProjectIndex = 0;
+	vector<Aircraft> aircraftList;
+
+	if (basedOnScratch == 'y') {
+		if (scratchProjects.empty()) {
+			cout << "No scratch projects available to select from!" << endl << endl;
+			return;
+		}
+
+		printAllScratchProjects();
+		int maxIndex = static_cast<int>(scratchProjects.size());
+
+		do {
+			cout << "Enter the index of the scratch project to use: ";
+			cin >> scratchProjectIndex;
+			if (scratchProjectIndex < 1 || scratchProjectIndex > maxIndex) {
+				cout << "Invalid index. Please try again." << endl;
+			}
+		} while (scratchProjectIndex < 1 || scratchProjectIndex > maxIndex);
+
+		ScratchProject selectedScratchProject = scratchProjects[scratchProjectIndex - 1];
+
+		cout << "Enter weaponry: ";
+		cin >> weaponry;
+		cout << "Enter coordinates: ";
+		cin >> coordinates;
+		cout << "Enter start time: ";
+		cin >> startTime;
+		cout << "Enter end time: ";
+		cin >> endTime;
+
+		AttackProject newProject(selectedScratchProject, weaponry, coordinates, startTime, endTime, aircraftList);
+		attackProjects.push_back(newProject);
+		cout << newProject.getName() << " Attack project added." << endl << endl;
+	} 
+	else {
+		cout << "Enter project name: ";
+		cin >> name;
+		cout << "Enter project description: ";
+		cin >> desc;
+		cout << "Enter number of aircrafts needed: ";
+		cin >> numOfAircraft;
+		cout << "Enter weaponry: ";
+		cin >> weaponry;
+		cout << "Enter coordinates: ";
+		cin >> coordinates;
+		cout << "Enter start time: ";
+		cin >> startTime;
+		cout << "Enter end time: ";
+		cin >> endTime;
+
+		AttackProject newProject(name, desc, numOfAircraft, weaponry, coordinates, startTime, endTime, aircraftList);
+		attackProjects.push_back(newProject);
+		cout << newProject.getName() << " Attack project added." << endl << endl;
+	}
+}
+
+
+
+// Helper functions
 void printAllScratchProjects() {
     int i = 1;
     cout << endl << "Scratch Projects:" << endl << endl;
