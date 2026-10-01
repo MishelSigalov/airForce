@@ -1,5 +1,6 @@
 #pragma once
 
+#include "TimeUtils.h"
 #include <string>
 #include <vector>
 #include <ctime>
@@ -8,13 +9,7 @@ using std::string;
 using std::vector;
 using std::stoi;
 
-#define YEAR_START_INDEX 0
-#define MONTH_START_INDEX 5
-#define DAY_START_INDEX 8
-#define HOUR_START_INDEX 11
-#define MINUTE_START_INDEX 14
 
-#define SECONDS_IN_A_MINUTE 60
 
 class Aircraft {  
     public:
@@ -32,7 +27,5 @@ class Aircraft {
         vector<int> ids;
         vector<string> startTimes;
         vector<string> endTimes;
-  
-        // Helper function to convert time string to minutes from midnight for comparison
-        int timeToMinutes(string time) const;
+
 };
