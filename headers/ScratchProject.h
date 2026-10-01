@@ -10,6 +10,10 @@ class ScratchProject : public Project{
         string getCamera() const;
         string getFlightCourse() const;
         
+        bool isReady() const override {
+            // Scratch projects are not considered "ready" as they are templates for other projects
+            return false;
+        }
     protected:
         string camera;
         string flightCourse;

@@ -68,3 +68,11 @@ const vector<Aircraft*>& AttackProject::getAircraftList() const {
 int AttackProject::getId() const {
   return this->id;
 }
+
+bool AttackProject::isReady() const {
+  //Considered ready if all aircraft are assigned and the prep time is met
+	bool isEnoughAircraft = this->aircraftList.size() == this->numOfAircraft; // Check if enough aircraft are assigned
+	bool isEnoughPrepTime = TimeUtils::hasEnoughPrepTime(PREP_TIME_HOURS_ATTACK, this->startTime); // Check for the required prep time
+	
+	return isEnoughAircraft && isEnoughPrepTime;
+}

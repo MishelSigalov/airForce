@@ -2,7 +2,10 @@
 #include "ScratchProject.h"
 #include "Aircraft.h"
 #include <vector>
+#include <cmath>
 using std::vector;
+
+#define PREP_TIME_HOURS_RECON 3 // Minimum preparation time in hours
 
 class ReconProject : public ScratchProject{  
     public:
@@ -22,6 +25,8 @@ class ReconProject : public ScratchProject{
         string getEndTime() const;
         const vector<Aircraft*>& getAircraftList() const;
         int getId() const;
+
+        bool isReady() const override;
 
     private:
         int id; // only needed for attack or recon projects, not scratch projects

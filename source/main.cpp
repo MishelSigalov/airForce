@@ -29,6 +29,7 @@ void createAttackProject(char basedOnScratch);
 void autoAssignAircraftToProject(string projectSelection);
 void printAllProjectsInTimeRange(string startTime, string endTime);
 void changeTimes(string projectSelection, string newStartTime, string newEndTime);
+void isOperationReady(string projectSelection);
 
 string getSelectedProject();
 void printAllAircrafts();
@@ -94,6 +95,13 @@ int main() {
 				break;
 			}
 
+			case 7: {
+				cout << "---------Check if a project is ready---------" << endl;
+				string projectSelection = getSelectedProject();
+				isOperationReady(projectSelection);
+				break;
+			}
+
             case EXIT:
                 cout << "Exiting program..." << endl;
                 break;
@@ -133,13 +141,13 @@ int runMenu() {
         return EXIT;
     }
 
-    cout << "\nMenu options:" << endl;
+    cout << endl << "Menu options:" << endl;
     cout << "1. Add an aircraft" << endl 
          << "2. Add a scratch project" << endl 
          << "3. Create an attack or reconnaissance project" << endl 
          << "4. Auto assign aircraft to project" << endl 
          << "5. Get all project within a time range" << endl 
-         << "6. Get all aircraft assigned to a project" << endl 
+         << "6. Change project times" << endl 
          << "7. Check either a project is ready" << endl 
          << "8. Get all unready projects in X hours ahead" << endl 
          << "9. Exit" << endl;
@@ -457,7 +465,7 @@ void printAllProjectsInTimeRange(string startTime, string endTime) {
 	cout << "========================================" << endl << endl;
 }
 
-
+// Function to change the start and end times of a project, while checking for aircraft availability. (6)
 void changeTimes(string projectSelection, string newStartTime, string newEndTime) {
     int newStartMin = TimeUtils::timeToMinutes(newStartTime);
     int newEndMin   = TimeUtils::timeToMinutes(newEndTime);
@@ -576,6 +584,34 @@ void changeTimes(string projectSelection, string newStartTime, string newEndTime
         cout << " Note: " << conflictingAircraft.size() << " conflicting aircraft unassigned.\n";
     }
 }
+
+void isOperationReady(string projectSelection) {
+	if (projectSelection.empty() || projectSelection == "error") {
+		return;
+	}
+
+	char projectType = projectSelection[0]; // either r for Reconnaissance or a for Attack
+	int selectedProjectIndex = std::stoi(projectSelection.substr(1));
+
+	if(projectType == 'r') {
+		ReconProject& selectedProject = reconProjects[selectedProjectIndex];
+		if(selectedProject.isReady()) {
+			cout << "Reconnaissance Project " << selectedProject.getName() << " is ready for operation." << endl;
+		} else {
+			cout << "Reconnaissance Project " << selectedProject.getName() << " is NOT ready for operation." << endl;
+		}
+	} 
+	else if(projectType == 'a') {
+		AttackProject& selectedProject = attackProjects[selectedProjectIndex];
+		if(selectedProject.isReady()) {
+			cout << "Attack Project " << selectedProject.getName() << " is ready for operation." << endl;
+		} else {
+			cout << "Attack Project " << selectedProject.getName() << " is NOT ready for operation." << endl;
+		}
+	}
+}
+
+
 
 /* Helper functions */
 

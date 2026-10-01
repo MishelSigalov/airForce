@@ -26,5 +26,7 @@ namespace TimeUtils {
     string getTime(char timeType); // s for start time, e for end time
     // Helper to get maximum valid days for a given month
     int getDaysInMonth(int month);
+    // Checks if the current time is at least prepHours before the start time
+    bool hasEnoughPrepTime(int prepHours, string startTimeStr); 
 
 }

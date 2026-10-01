@@ -34,7 +34,7 @@ namespace TimeUtils {
         else if(timeType == 'e') {
             cout << "----End Time----" << endl;
         }
-        
+
         // 1. Validate Year
         while (true) {
             cout << "Enter Year (2026-2100): ";
@@ -111,6 +111,21 @@ namespace TimeUtils {
             default:
                 return 31;
         }
+    }
+    
+
+    bool hasEnoughPrepTime(int prepHours, string startTimeStr) {
+        int startMinutes = timeToMinutes(startTimeStr);
+        if (startMinutes == -1) return false;
+
+        // Get current system time in minutes since Epoch
+        std::time_t nowSeconds = std::time(nullptr);
+        int nowMinutes = static_cast<int>(nowSeconds / 60);
+
+        int requiredBufferMinutes = prepHours * 60;
+
+        // Check if remaining minutes before start meets the required time, also of course, the start time must be in the future
+        return (startMinutes - nowMinutes) >= requiredBufferMinutes;
     }
 
 

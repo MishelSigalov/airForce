@@ -5,6 +5,8 @@
 #include <vector>
 using std::vector;
 
+#define PREP_TIME_HOURS_ATTACK 10 // Minimum preparation time in hours
+
 class AttackProject : public Project{  
     public:
         //regular constructor
@@ -36,6 +38,8 @@ class AttackProject : public Project{
         string getStartTime() const;
         string getEndTime() const;
         const vector<Aircraft*>& getAircraftList() const;
+
+        bool isReady() const override;
 
     private:
         int id; // only needed for attack or recon projects, not scratch projects
