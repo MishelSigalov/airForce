@@ -11,14 +11,19 @@ int Aircraft::getId() const
     return id;
 }
 
-bool Aircraft::isAvailable(string startTime, string endTime) const {
+
+bool Aircraft::isAvailable(string startTime, string endTime, int projectId) const { //set the projectId to -1 by default, meaning no project is being updated
     // 60-minute maintenance window
     int requestedStart = TimeUtils::timeToMinutes(startTime) - 60; 
     int requestedEnd   = TimeUtils::timeToMinutes(endTime) + 60; 
 
-    for (size_t i = 0; i < startTimes.size(); i++) {
-        int bookedStart = TimeUtils::timeToMinutes(startTimes[i]);
-        int bookedEnd   = TimeUtils::timeToMinutes(endTimes[i]);
+    for (size_t i = 0; i < this->ids.size(); i++) {
+        // Skip the project being updated if projectId is provided
+        if (projectId != -1 && this->ids[i] == projectId) {
+            continue;
+        }
+        int bookedStart = TimeUtils::timeToMinutes(this->startTimes[i]);
+        int bookedEnd   = TimeUtils::timeToMinutes(this->endTimes[i]);
 
         if (requestedStart < bookedEnd && bookedStart < requestedEnd) {
             return false; // Time collision

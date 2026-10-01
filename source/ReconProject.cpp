@@ -2,25 +2,50 @@
 
 int ReconProject::nextId = 1000;
 
-ReconProject::ReconProject(string name, string desc, int numOfAircraft,
-													 string camera, string flightCourse, string startTime, string endTime, vector<Aircraft> aircraftList)
-		: ScratchProject(name, desc, numOfAircraft, camera, flightCourse),
-			id(++nextId), startTime(startTime), endTime(endTime), aircraftList(aircraftList)
-{
-}
+ReconProject::ReconProject(const string& name, 
+                         const string& desc, 
+                         int numOfAircraft,
+                         const string& camera, 
+                         const string& flightCourse, 
+                         const string& startTime, 
+                         const string& endTime, 
+                         const vector<Aircraft*>& aircraftList)
+    : ScratchProject(name, desc, numOfAircraft, camera, flightCourse),
+      id(++nextId), 
+      startTime(startTime), 
+      endTime(endTime), 
+      aircraftList(aircraftList) 
+{}
 
-ReconProject::ReconProject(ScratchProject scratchProject, string startTime, string endTime, vector<Aircraft> aircraftList)
-    : ScratchProject(scratchProject.getName(), scratchProject.getDesc(), scratchProject.getNumOfAircraft(), scratchProject.getCamera(), scratchProject.getFlightCourse()),
-      id(++nextId), startTime(startTime), endTime(endTime), aircraftList(aircraftList)
-{
-}
+// 2. Delegate Constructor (Reuses the first constructor to prevent duplicate code)
+ReconProject::ReconProject(const ScratchProject& scratchProject, 
+                         const string& startTime, 
+                         const string& endTime, 
+                         const vector<Aircraft*>& aircraftList)
+    : ReconProject(scratchProject.getName(), 
+                   scratchProject.getDesc(), 
+                   scratchProject.getNumOfAircraft(),
+                   scratchProject.getCamera(), 
+                   scratchProject.getFlightCourse(), 
+                   startTime, 
+                   endTime, 
+                   aircraftList) 
+{}
 
-void ReconProject::setAircraftList(vector<Aircraft> aircraftList) {
+void ReconProject::setAircraftList(vector<Aircraft*> aircraftList) {
 	this->aircraftList = aircraftList;
 }
 
-void ReconProject::addAircraft(Aircraft aircraft) {
+void ReconProject::addAircraft(Aircraft* aircraft) {
 	this->aircraftList.push_back(aircraft);
+}
+
+void ReconProject::setStartTime(string newStartTime) {
+	this->startTime = newStartTime;
+}
+
+void ReconProject::setEndTime(string newEndTime) {
+	this->endTime = newEndTime;
 }
 
 string ReconProject::getStartTime() const {
@@ -31,7 +56,7 @@ string ReconProject::getEndTime() const {
 	return this->endTime;
 }
 
-const vector<Aircraft>& ReconProject::getAircraftList() const {
+const vector<Aircraft*>& ReconProject::getAircraftList() const {
 	return this->aircraftList;
 }
 

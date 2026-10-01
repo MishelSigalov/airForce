@@ -15,7 +15,7 @@ class Aircraft {
     public:
         Aircraft(int id);
         int getId() const;
-        bool isAvailable(string startTime, string endTime) const;
+        bool isAvailable(string startTime, string endTime, int projectId = -1) const;
         void assign(string startTime, string endTime, int projectId);
         void unassign(int projectId);
 
