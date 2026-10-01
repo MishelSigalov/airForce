@@ -14,15 +14,15 @@ class Aircraft {
         Aircraft(int id);
         int getId() const;
         bool isAvailable(string startTime, string endTime) const;
-        void assign(string startTime, string endTime, string projectName);
-        void unassign(string projectName);
+        void assign(string startTime, string endTime, int projectId);
+        void unassign(int projectId);
 
 
         
     private:
         int id;
         int numberofProjectsAssigned;
-        vector<string> projectNames;
+        vector<int> ids;
         vector<string> startTimes;
         vector<string> endTimes;
   

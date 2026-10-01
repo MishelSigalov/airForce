@@ -1,18 +1,19 @@
 #include "AttackProject.h"
 
+int AttackProject::nextId = 0;
+
 AttackProject::AttackProject(string name, string desc, int numOfAircraft,
                                                          string weaponry, string coordinates, string startTime, string endTime, vector<Aircraft> aircraftList)
-        : Project(name, desc, numOfAircraft),
+        : Project(name, desc, numOfAircraft), id(++nextId),
             weaponry(weaponry), coordinates(coordinates), startTime(startTime), endTime(endTime), aircraftList(aircraftList)
 {
 }
-
-#include "AttackProject.h"
 
 AttackProject::AttackProject(ScratchProject scratchProject, string weaponry, 
                              string coordinates, string startTime, 
                              string endTime, vector<Aircraft> aircraftList)
     : Project(scratchProject.getName(), scratchProject.getDesc(), scratchProject.getNumOfAircraft()),
+      id(++nextId),
       weaponry(weaponry),
       coordinates(coordinates),
       startTime(startTime),
@@ -39,4 +40,8 @@ string AttackProject::getEndTime() const {
 
 const vector<Aircraft>& AttackProject::getAircraftList() const {
   return this->aircraftList;
+}
+
+int AttackProject::getId() const {
+  return this->id;
 }

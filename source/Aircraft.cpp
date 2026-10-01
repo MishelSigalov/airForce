@@ -29,17 +29,17 @@ bool Aircraft::isAvailable(string startTime, string endTime) const {
     return true;
 }
 
-void Aircraft::assign(string startTime, string endTime, string projectName) {
+void Aircraft::assign(string startTime, string endTime, int projectId) {
     this->numberofProjectsAssigned++;
-    this->projectNames.push_back(projectName);
+    this->ids.push_back(projectId);
     this->startTimes.push_back(startTime);
     this->endTimes.push_back(endTime);
 }
 
-void Aircraft::unassign(string projectName) {
-    for (int i = 0; i < projectNames.size(); ++i) {
-        if (projectNames[i] == projectName) {
-            projectNames.erase(projectNames.begin() + i);
+void Aircraft::unassign(int projectId) {
+    for (int i = 0; i < ids.size(); ++i) {
+        if (ids[i] == projectId) {
+            ids.erase(ids.begin() + i);
             startTimes.erase(startTimes.begin() + i); // delete the corresponding start time
             endTimes.erase(endTimes.begin() + i); // delete the corresponding end time
             this->numberofProjectsAssigned--;
