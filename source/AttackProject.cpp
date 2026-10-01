@@ -28,3 +28,15 @@ void AttackProject::setAircraftList(vector<Aircraft> aircraftList) {
 void AttackProject::addAircraft(Aircraft aircraft) {
 	this->aircraftList.push_back(aircraft);
 }
+
+string AttackProject::getStartTime() const {
+  return this->startTime;
+}
+
+string AttackProject::getEndTime() const {
+  return this->endTime;
+}
+
+const vector<Aircraft>& AttackProject::getAircraftList() const {
+  return this->aircraftList;
+}

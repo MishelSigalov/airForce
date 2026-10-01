@@ -13,6 +13,9 @@ class ReconProject : public ScratchProject{
         ReconProject(ScratchProject scratchProject, string startTime, string endTime, vector<Aircraft> aircraftList);
         void setAircraftList(vector<Aircraft> aircraftList);
         void addAircraft(Aircraft aircraft);
+        string getStartTime() const;
+        string getEndTime() const;
+        const vector<Aircraft>& getAircraftList() const;
     private:
         string startTime;
         string endTime;

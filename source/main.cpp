@@ -17,14 +17,22 @@ using std::string;
 #define RECON_PROJECT 1
 #define ATTACK_PROJECT 2
 
+// Function declarations
 int runMenu();
 void addAircraft();
 void addScratchProject();
 void createProject();
 void createReconProject(char basedOnScratch);
 void createAttackProject(char basedOnScratch);
+void autoAssignAircraftToProject(string selection);
+string getSelectedProject();
+void printAllAircrafts();
 void printAllScratchProjects();
 void printAllReconProjects();
+void printAllAttackProjects();
+void printAllAircraftsInProject(const vector<Aircraft>& aircraftList, const string projectName);
+int parseTime(string time, int startIndex);
+string formatTime(int hour, int minute);
 
 // Global variables
 vector<Aircraft> availableAircrafts;
@@ -38,17 +46,25 @@ int main() {
         option = runMenu();
         switch(option) {
             case 1: {
+				// Add an aircraft
                 addAircraft();
                 break;
             }
             case 2: {
+				// Add a scratch project
                 addScratchProject();
                 break;
             }
             case 3: {
+				// Create an attack or reconnaissance project
                 createProject();
-                break; // 1. Fixed missing break
+                break; 
             }
+			case 4: {
+				// Auto assign aircraft to project
+                autoAssignAircraftToProject(getSelectedProject());
+				break;
+			}
             case EXIT:
                 cout << "Exiting program..." << endl;
                 break;
@@ -66,7 +82,7 @@ int main() {
             }
             case 12: {
                 printAllReconProjects();
-                break; // 2. Fixed missing brace & break
+                break;
             }
             default:
                 cout << "Invalid option. Please try again." << endl << endl;
@@ -158,7 +174,7 @@ void createProject() {
     if (projectType == RECON_PROJECT) {
         createReconProject(basedOnScratch);
     } else if (projectType == ATTACK_PROJECT) {
-        creat64eAttackProject(basedOnScratch);
+        createAttackProject(basedOnScratch);
     }
 }
 
@@ -167,6 +183,7 @@ void createReconProject(char basedOnScratch) {
     string name, desc, camera, flightCourse, startTime, endTime;
     int numOfAircraft = 0;
     int scratchProjectIndex = 0;
+	int maxIndex = 0;
     vector<Aircraft> aircraftList;
 
     if (basedOnScratch == 'y') {
@@ -176,7 +193,7 @@ void createReconProject(char basedOnScratch) {
         }
 
         printAllScratchProjects();
-        int maxIndex = static_cast<int>(scratchProjects.size());
+        maxIndex = scratchProjects.size();
 
         do {
             cout << "Enter the index of the scratch project to use: ";
@@ -189,8 +206,6 @@ void createReconProject(char basedOnScratch) {
 		//-1 because the user sees a 1-based index, but the vector is 0-based
         ScratchProject selectedScratchProject = scratchProjects[scratchProjectIndex - 1];
 
-        cout << "Enter flight course: ";
-        cin >> flightCourse;
         cout << "Enter start time: ";
         cin >> startTime;
         cout << "Enter end time: ";
@@ -199,7 +214,8 @@ void createReconProject(char basedOnScratch) {
         ReconProject newProject(selectedScratchProject, startTime, endTime, aircraftList);
         reconProjects.push_back(newProject);
         cout << newProject.getName() << " Reconnaissance project added." << endl << endl;
-    } else {
+    } 
+	else {
         cout << "Enter project name: ";
         cin >> name;
         cout << "Enter project description: ";
@@ -226,6 +242,7 @@ void createAttackProject(char basedOnScratch) {
 	string name, desc, weaponry, coordinates, startTime, endTime;
 	int numOfAircraft = 0;
 	int scratchProjectIndex = 0;
+	int maxIndex = 0;
 	vector<Aircraft> aircraftList;
 
 	if (basedOnScratch == 'y') {
@@ -235,7 +252,7 @@ void createAttackProject(char basedOnScratch) {
 		}
 
 		printAllScratchProjects();
-		int maxIndex = static_cast<int>(scratchProjects.size());
+		maxIndex = scratchProjects.size();
 
 		do {
 			cout << "Enter the index of the scratch project to use: ";
@@ -282,9 +299,131 @@ void createAttackProject(char basedOnScratch) {
 	}
 }
 
+// This function will auto assign available aircraft to projects based on their availability.
+void autoAssignAircraftToProject(string selection) {
+    if (selection.empty() || selection == "error") {
+        return;
+    }
+
+    char projectType = selection[0]; // either r for Reconnaissance or a for Attack
+    int selectedProjectIndex = std::stoi(selection.substr(1));
+
+    string projectName;
+    int requiredAircraft = 0;
+    string startTime = "";
+    string endTime = "";
+    vector<Aircraft> assignedAircraft;
+
+	if(projectType == 'r') {
+		ReconProject& selectedProject = reconProjects[selectedProjectIndex];
+		projectName = selectedProject.getName();
+		requiredAircraft = selectedProject.getNumOfAircraft();
+		
+		startTime = selectedProject.getStartTime();
+		endTime = selectedProject.getEndTime();
+	} 
+	else if(projectType == 'a') {
+		
+		AttackProject& selectedProject = attackProjects[selectedProjectIndex];
+		projectName = selectedProject.getName();
+		requiredAircraft = selectedProject.getNumOfAircraft();
+
+		startTime = selectedProject.getStartTime();
+		endTime = selectedProject.getEndTime();
+	}
+
+
+	for (auto& aircraft : availableAircrafts) {
+        if (!aircraft.isAvailable(startTime, endTime)) {
+            continue;
+        }
+		assignedAircraft.push_back(aircraft);
+		aircraft.assign(startTime, endTime, projectName);
+		if (assignedAircraft.size() == requiredAircraft) {
+			cout << endl << endl << "All " << requiredAircraft << " required aircrafts assigned to the project." << endl;
+			break;
+		}
+	}
+
+	if (assignedAircraft.size() < requiredAircraft) {
+		cout << endl << endl << "Only " << assignedAircraft.size() << " out of " << requiredAircraft << " required aircrafts assigned to the project." << endl;
+	} 
+	
+	if(projectType == 'r') {
+		reconProjects[selectedProjectIndex].setAircraftList(assignedAircraft);
+	} 
+	else if(projectType == 'a') {
+		attackProjects[selectedProjectIndex].setAircraftList(assignedAircraft);
+	}
+	
+	printAllAircraftsInProject(assignedAircraft, projectName);
+    
+}
+
+
+string getSelectedProject() {
+	string selection = ""; //selection[0] = project type (r/a), selection[1] = project index
+	char projectType;
+	int selectedProjectIndex = 0;
+	int maxIndex = 0;
+	do{
+		cout << "Would you like to auto assign aircraft to Reconnaissance or Attack projects? (r/a): ";
+		cin >> projectType;
+		if (projectType != 'r' && projectType != 'a') {
+			cout << "Invalid option. Please try again. (r/a)" << endl;
+		}
+	} while (projectType != 'r' && projectType != 'a');
+
+	selection += projectType;
+
+	if(projectType == 'r') {
+		maxIndex = reconProjects.size();
+		if (maxIndex == 0) {
+			cout << "No Reconnaissance projects available to select from!" << endl << endl;
+            return "error";
+		}
+
+		printAllReconProjects();
+		do {
+			cout << "Enter the index of the Reconnaissance project to assign aircraft to: ";
+			cin >> selectedProjectIndex;
+			if (selectedProjectIndex < 1 || selectedProjectIndex > maxIndex) {
+				cout << "Invalid index. Please try again." << endl;
+			}
+		} while (selectedProjectIndex < 1 || selectedProjectIndex > maxIndex);
+		
+	} 
+	else if(projectType == 'a') {
+		maxIndex = attackProjects.size();
+		if (maxIndex == 0) {
+			cout << "No Attack projects available to select from!" << endl << endl;
+            return "error";
+		}
+		printAllAttackProjects();
+		do {
+			cout << "Enter the index of the Attack project to assign aircraft to: ";
+			cin >> selectedProjectIndex;
+			if (selectedProjectIndex < 1 || selectedProjectIndex > maxIndex) {
+				cout << "Invalid index. Please try again." << endl;
+			}
+		} while (selectedProjectIndex < 1 || selectedProjectIndex > maxIndex);
+	}
+
+	//-1 because the user sees a 1-based index, but the vector is 0-based
+	selection += std::to_string(selectedProjectIndex - 1); //append the selected project index to the selection string
+	return selection;
+}
 
 
 // Helper functions
+void printAllAircrafts() {
+	cout << endl << "Available Aircrafts:" << endl << endl;
+	for (const auto& aircraft : availableAircrafts) {
+		cout << "Aircraft ID: " << aircraft.getId() << endl;
+	}
+	cout << endl;
+}
+
 void printAllScratchProjects() {
     int i = 1;
     cout << endl << "Scratch Projects:" << endl << endl;
@@ -303,4 +442,22 @@ void printAllReconProjects() {
         i++;
     }
     cout << endl;
+}
+
+void printAllAttackProjects() {
+	int i = 1;
+	cout << endl << "Attack Projects:" << endl << endl;
+	for (const auto& project : attackProjects) {
+		cout << i << ". Name: " << project.getName() << endl;
+		i++;
+	}
+	cout << endl;
+}	
+
+void printAllAircraftsInProject(const vector<Aircraft>& aircraftList, const string projectName) {
+	cout << endl << "Aircrafts in Project " << projectName << ": " << endl << endl;
+	for (const auto& aircraft : aircraftList) {
+		cout << "Aircraft ID: " << aircraft.getId() << endl;
+	}
+	cout << endl << endl;
 }

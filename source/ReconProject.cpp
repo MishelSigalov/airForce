@@ -20,3 +20,15 @@ void ReconProject::setAircraftList(vector<Aircraft> aircraftList) {
 void ReconProject::addAircraft(Aircraft aircraft) {
 	this->aircraftList.push_back(aircraft);
 }
+
+string ReconProject::getStartTime() const {
+	return this->startTime;
+}
+
+string ReconProject::getEndTime() const {
+	return this->endTime;
+}
+
+const vector<Aircraft>& ReconProject::getAircraftList() const {
+	return this->aircraftList;
+}

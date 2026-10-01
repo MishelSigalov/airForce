@@ -14,6 +14,9 @@ class AttackProject : public Project{
         AttackProject(ScratchProject scratchProject, string weaponry, string coordinates, string startTime, string endTime, vector<Aircraft> aircraftList);
         void setAircraftList(vector<Aircraft> aircraftList);
         void addAircraft(Aircraft aircraft);
+        string getStartTime() const;
+        string getEndTime() const;
+        const vector<Aircraft>& getAircraftList() const;
 
     private:
         string weaponry;
