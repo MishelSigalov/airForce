@@ -28,6 +28,8 @@ void createReconProject(char basedOnScratch);
 void createAttackProject(char basedOnScratch);
 void autoAssignAircraftToProject(string selection);
 string getSelectedProject();
+void printAllProjectsInTimeRange(string startTime, string endTime);
+
 void printAllAircrafts();
 void printAllScratchProjects();
 void printAllReconProjects();
@@ -50,16 +52,19 @@ int main() {
                 addAircraft();
                 break;
             }
+
             case 2: {
 				// Add a scratch project
                 addScratchProject();
                 break;
             }
+
             case 3: {
 				// Create an attack or reconnaissance project
                 createProject();
                 break; 
             }
+
 			case 4: {
 				if(availableAircrafts.empty()) {
 					cout << "No available aircrafts to assign!" << endl << endl;
@@ -69,6 +74,16 @@ int main() {
                 autoAssignAircraftToProject(getSelectedProject());
 				break;
 			}
+
+			case 5: {
+				cout << "---------Get all projects within a time range---------" << endl;
+				string startTime = TimeUtils::getTime('s');
+				string endTime = TimeUtils::getTime('e');
+				printAllProjectsInTimeRange(startTime, endTime);
+
+				break;
+			}
+
             case EXIT:
                 cout << "Exiting program..." << endl;
                 break;
@@ -210,10 +225,8 @@ void createReconProject(char basedOnScratch) {
 		//-1 because the user sees a 1-based index, but the vector is 0-based
         ScratchProject selectedScratchProject = scratchProjects[scratchProjectIndex - 1];
 
-        cout << endl << "----Start Time----" << endl;
-		startTime = TimeUtils::getTime();
-		cout << endl << "----End Time----" << endl;
-		endTime = TimeUtils::getTime();
+		startTime = TimeUtils::getTime('s');
+		endTime = TimeUtils::getTime('e');
 
         ReconProject newProject(selectedScratchProject, startTime, endTime, aircraftList);
         reconProjects.push_back(newProject);
@@ -230,10 +243,8 @@ void createReconProject(char basedOnScratch) {
         cin >> camera;
         cout << "Enter flight course: ";
         cin >> flightCourse;
-        cout << endl << "----Start Time----" << endl;
-		startTime = TimeUtils::getTime();
-		cout << endl << "----End Time----" << endl;
-		endTime = TimeUtils::getTime();
+		startTime = TimeUtils::getTime('s');
+		endTime = TimeUtils::getTime('e');
 
         ReconProject newProject(name, desc, numOfAircraft, camera, flightCourse, startTime, endTime, aircraftList);
         reconProjects.push_back(newProject);
@@ -272,10 +283,8 @@ void createAttackProject(char basedOnScratch) {
 		cin >> weaponry;
 		cout << "Enter coordinates: ";
 		cin >> coordinates;
-		cout << endl << "----Start Time----" << endl;
-		startTime = TimeUtils::getTime();
-		cout << endl << "----End Time----" << endl;
-		endTime = TimeUtils::getTime();
+		startTime = TimeUtils::getTime('s');
+		endTime = TimeUtils::getTime('e');
 
 		AttackProject newProject(selectedScratchProject, weaponry, coordinates, startTime, endTime, aircraftList);
 		attackProjects.push_back(newProject);
@@ -292,10 +301,8 @@ void createAttackProject(char basedOnScratch) {
 		cin >> weaponry;
 		cout << "Enter coordinates: ";
 		cin >> coordinates;
-		cout << endl << "----Start Time----" << endl;
-		startTime = TimeUtils::getTime();
-		cout << endl << "----End Time----" << endl;
-		endTime = TimeUtils::getTime();
+		startTime = TimeUtils::getTime('s');
+		endTime = TimeUtils::getTime('e');
 
 		AttackProject newProject(name, desc, numOfAircraft, weaponry, coordinates, startTime, endTime, aircraftList);
 		attackProjects.push_back(newProject);
@@ -434,21 +441,65 @@ string getSelectedProject() {
 }
 
 
-void printAllProjectsInTimeRange() {
-	string startTime, endTime;
-	cout << endl << "----Start Time----" << endl;
-	startTime = TimeUtils::getTime();
-	cout << endl << "----End Time----" << endl;
-	endTime = TimeUtils::getTime();
+// Function to print all projects within a specified time range. (5)
+void printAllProjectsInTimeRange(string startTime, string endTime) {
+    int rangeStartMin = TimeUtils::timeToMinutes(startTime);
+    int rangeEndMin   = TimeUtils::timeToMinutes(endTime);
 
-	for (const auto& project : reconProjects) {
-		if (project.getStartTime() >= startTime && project.getEndTime() <= endTime) {
-			cout << "Reconnaissance Project: " << project.getName() << ", ID: " << project.getId() << endl;
-		}
-	}
+    if (rangeEndMin <= rangeStartMin) {
+        cout << "Error: End time must occur after start time.\n";
+        return;
+    }
+
+    cout << endl << "========================================"<< endl;
+    cout << " Projects with Start or End in Range: " 
+         << startTime << "  -->  " << endTime << "" << endl;
+    cout << "========================================" << endl;
+
+    bool foundAny = false;
+
+    // Check Reconnaissance Projects
+    for (auto& project : reconProjects) {
+        int projStartMin = TimeUtils::timeToMinutes(project.getStartTime());
+        int projEndMin   = TimeUtils::timeToMinutes(project.getEndTime());
+
+        bool startInRange = (projStartMin >= rangeStartMin && projStartMin <= rangeEndMin);
+        bool endInRange   = (projEndMin >= rangeStartMin && projEndMin <= rangeEndMin);
+
+		// If either the start or end time of the project falls within the specified range, it is considered a match.
+        if (startInRange || endInRange) {
+            cout << "[Recon Project] ID: " << project.getId() 
+                 << " | Name: " << project.getName()
+                 << " | Time: " << project.getStartTime() << " to " << project.getEndTime() 
+                 << endl;
+            foundAny = true;
+        }
+    }
+
+    // Check Attack Projects
+    for (auto& project : attackProjects) {
+        int projStartMin = TimeUtils::timeToMinutes(project.getStartTime());
+        int projEndMin   = TimeUtils::timeToMinutes(project.getEndTime());
+
+        bool startInRange = (projStartMin >= rangeStartMin && projStartMin <= rangeEndMin);
+        bool endInRange   = (projEndMin >= rangeStartMin && projEndMin <= rangeEndMin);
+
+		// If either the start or end time of the project falls within the specified range, it is considered a match.
+        if (startInRange || endInRange) {
+            cout << "[Attack Project] ID: " << project.getId() 
+                 << " | Name: " << project.getName()
+                 << " | Time: " << project.getStartTime() << " to " << project.getEndTime() 
+                 << endl;
+            foundAny = true;
+        }
+    }
+
+    if (!foundAny) {
+        cout << "No projects found within the specified time range.\n";
+    }
+
+	cout << "========================================" << endl << endl;
 }
-
-
 
 					/* Helper functions */
 

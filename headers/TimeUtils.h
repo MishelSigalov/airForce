@@ -23,7 +23,7 @@ namespace TimeUtils {
     int timeToMinutes(const string time);
 
     // Function to get a valid time input from the user in the format "YYYY-MM-DD HH:MM".
-    string getTime();
+    string getTime(char timeType); // s for start time, e for end time
     // Helper to get maximum valid days for a given month
     int getDaysInMonth(int month);
 

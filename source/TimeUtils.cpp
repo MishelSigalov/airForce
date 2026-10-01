@@ -25,9 +25,16 @@ namespace TimeUtils {
 
 
     
-    string getTime() {
+    string getTime(char timeType) {
         int year = 0, month = 0, day = 0, hour = 0, minute = 0, maxDays = 0;
 
+        if(timeType == 's') {
+            cout << "----Start Time----" << endl;
+        } 
+        else if(timeType == 'e') {
+            cout << "----End Time----" << endl;
+        }
+        
         // 1. Validate Year
         while (true) {
             cout << "Enter Year (2026-2100): ";
