@@ -12,18 +12,16 @@ int Aircraft::getId() const
 }
 
 bool Aircraft::isAvailable(string startTime, string endTime) const {
-    int bookedStart = 0;
-    int bookedEnd = 0;
-
-    //-60 and +60 are used due to maintace time between projects
+    // 60-minute maintenance window
     int requestedStart = timeToMinutes(startTime) - 60; 
-    int requestedEnd = timeToMinutes(endTime) + 60; 
+    int requestedEnd   = timeToMinutes(endTime) + 60; 
 
-    for (int i = 0; i < startTimes.size(); i++) {
-        bookedStart = timeToMinutes(startTimes[i]);
-        bookedEnd = timeToMinutes(endTimes[i]);
+    for (size_t i = 0; i < startTimes.size(); i++) {
+        int bookedStart = timeToMinutes(startTimes[i]);
+        int bookedEnd   = timeToMinutes(endTimes[i]);
+
         if (requestedStart < bookedEnd && bookedStart < requestedEnd) {
-            return false;
+            return false; // Time collision
         }
     }
     return true;
@@ -49,7 +47,13 @@ void Aircraft::unassign(int projectId) {
 }
 
 int Aircraft::timeToMinutes(string time) const {
-    int hour = std::stoi(time.substr(HOUR_START_INDEX, 2)); // 2-digit hour
-    int minute = std::stoi(time.substr(MINUTE_START_INDEX, 2)); // 2-digit minute
-    return hour * 60 + minute;
+    std::tm tm = {};
+    tm.tm_year = stoi(time.substr(YEAR_START_INDEX, 4)) - 1900; // Years since 1900
+    tm.tm_mon  = stoi(time.substr(MONTH_START_INDEX, 2)) - 1;    // Months 0-11
+    tm.tm_mday = stoi(time.substr(DAY_START_INDEX, 2));        // Day 1-31
+    tm.tm_hour = stoi(time.substr(HOUR_START_INDEX, 2));       // Hour 0-23
+    tm.tm_min  = stoi(time.substr(MINUTE_START_INDEX, 2));       // Minute 0-59
+
+    std::time_t timeInSeconds = std::mktime(&tm); // this will give you the time in seconds since epoch
+    return static_cast<int>(timeInSeconds / SECONDS_IN_A_MINUTE); // Convert seconds to minutes and then to int
 }

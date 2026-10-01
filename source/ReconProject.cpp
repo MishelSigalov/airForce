@@ -1,6 +1,6 @@
 #include "ReconProject.h"
 
-int ReconProject::nextId = 0;
+int ReconProject::nextId = 1000;
 
 ReconProject::ReconProject(string name, string desc, int numOfAircraft,
 													 string camera, string flightCourse, string startTime, string endTime, vector<Aircraft> aircraftList)

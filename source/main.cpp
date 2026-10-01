@@ -12,6 +12,7 @@ using std::endl;
 using std::cin;
 using std::vector;
 using std::string;
+using std::to_string;
 
 #define EXIT 9
 #define RECON_PROJECT 1
@@ -24,13 +25,15 @@ void addScratchProject();
 void createProject();
 void createReconProject(char basedOnScratch);
 void createAttackProject(char basedOnScratch);
+string getTime();
+int getDaysInMonth(int month);
 void autoAssignAircraftToProject(string selection);
 string getSelectedProject();
 void printAllAircrafts();
 void printAllScratchProjects();
 void printAllReconProjects();
 void printAllAttackProjects();
-void printAllAircraftsInProject(const vector<Aircraft>& aircraftList, const string projectName);
+void printAllAircraftsInProject(int projectId, char projectType);
 
 // Global variables
 vector<Aircraft> availableAircrafts;
@@ -59,6 +62,10 @@ int main() {
                 break; 
             }
 			case 4: {
+				if(availableAircrafts.empty()) {
+					cout << "No available aircrafts to assign!" << endl << endl;
+					break;
+				}
 				// Auto assign aircraft to project
                 autoAssignAircraftToProject(getSelectedProject());
 				break;
@@ -116,7 +123,7 @@ int runMenu() {
     return option;
 }
 
-// Function to add an aircraft by id, connected the first option in the main menu
+// Function to add an aircraft by id. (1)
 void addAircraft() {
     int id = 0;
     cout << "Enter the aircraft ID: ";
@@ -126,7 +133,7 @@ void addAircraft() {
     cout << "Aircraft with ID " << id << " added." << endl << endl;
 }
 
-// Function to add a scratch project, connected to the second option in the main menu
+// Function to add a scratch project. (2)
 void addScratchProject() {
     string name, desc, camera, flightCourse;
     int numOfAircraft = 0;
@@ -147,7 +154,7 @@ void addScratchProject() {
     cout << "Scratch project added." << endl << endl;
 }
 
-// Functions to create a project (either Reconnaissance or Attack), connected to the third option in the main menu
+// Functions to create a project (either Reconnaissance or Attack). (3)
 void createProject() {
     int projectType = 0;
     char basedOnScratch;
@@ -176,7 +183,7 @@ void createProject() {
     }
 }
 
-//create a Reconnaissance project, either based on a scratch project or from scratch
+//create a Reconnaissance project, either based on a scratch project or from scratch (3)
 void createReconProject(char basedOnScratch) {
     string name, desc, camera, flightCourse, startTime, endTime;
     int numOfAircraft = 0;
@@ -204,14 +211,14 @@ void createReconProject(char basedOnScratch) {
 		//-1 because the user sees a 1-based index, but the vector is 0-based
         ScratchProject selectedScratchProject = scratchProjects[scratchProjectIndex - 1];
 
-        cout << "Enter start time: ";
-        cin >> startTime;
-        cout << "Enter end time: ";
-        cin >> endTime;
+        cout << endl << "----Start Time----" << endl;
+		startTime = getTime();
+		cout << endl << "----End Time----" << endl;
+		endTime = getTime();
 
         ReconProject newProject(selectedScratchProject, startTime, endTime, aircraftList);
         reconProjects.push_back(newProject);
-        cout << newProject.getName() << " Reconnaissance project added." << endl << endl;
+        cout << newProject.getName() << " Reconnaissance project added." << " ID: " << newProject.getId() << endl << endl;
     } 
 	else {
         cout << "Enter project name: ";
@@ -224,18 +231,18 @@ void createReconProject(char basedOnScratch) {
         cin >> camera;
         cout << "Enter flight course: ";
         cin >> flightCourse;
-        cout << "Enter start time: ";
-        cin >> startTime;
-        cout << "Enter end time: ";
-        cin >> endTime;
+        cout << endl << "----Start Time----" << endl;
+		startTime = getTime();
+		cout << endl << "----End Time----" << endl;
+		endTime = getTime();
 
         ReconProject newProject(name, desc, numOfAircraft, camera, flightCourse, startTime, endTime, aircraftList);
         reconProjects.push_back(newProject);
-        cout << newProject.getName() << " Reconnaissance project added." << endl << endl;
+        cout << newProject.getName() << " Reconnaissance project added." << " ID: " << newProject.getId() << endl << endl;
     }
 }
 
-//create an Attack project, either based on a scratch project or from scratch
+//create an Attack project, either based on a scratch project or from scratch (3)
 void createAttackProject(char basedOnScratch) {
 	string name, desc, weaponry, coordinates, startTime, endTime;
 	int numOfAircraft = 0;
@@ -266,14 +273,14 @@ void createAttackProject(char basedOnScratch) {
 		cin >> weaponry;
 		cout << "Enter coordinates: ";
 		cin >> coordinates;
-		cout << "Enter start time: ";
-		cin >> startTime;
-		cout << "Enter end time: ";
-		cin >> endTime;
+		cout << endl << "----Start Time----" << endl;
+		startTime = getTime();
+		cout << endl << "----End Time----" << endl;
+		endTime = getTime();
 
 		AttackProject newProject(selectedScratchProject, weaponry, coordinates, startTime, endTime, aircraftList);
 		attackProjects.push_back(newProject);
-		cout << newProject.getName() << " Attack project added." << endl << endl;
+		cout << newProject.getName() << " Attack project added." << " ID: " << newProject.getId() << endl << endl;
 	} 
 	else {
 		cout << "Enter project name: ";
@@ -286,18 +293,20 @@ void createAttackProject(char basedOnScratch) {
 		cin >> weaponry;
 		cout << "Enter coordinates: ";
 		cin >> coordinates;
-		cout << "Enter start time: ";
-		cin >> startTime;
-		cout << "Enter end time: ";
-		cin >> endTime;
+		cout << endl << "----Start Time----" << endl;
+		startTime = getTime();
+		cout << endl << "----End Time----" << endl;
+		endTime = getTime();
 
 		AttackProject newProject(name, desc, numOfAircraft, weaponry, coordinates, startTime, endTime, aircraftList);
 		attackProjects.push_back(newProject);
-		cout << newProject.getName() << " Attack project added." << endl << endl;
+		cout << newProject.getName() << " Attack project added."  << " ID: " << newProject.getId() << endl << endl;
 	}
 }
 
-// This function will auto assign available aircraft to projects based on their availability.
+
+
+// This function will auto assign available aircraft to projects based on their availability. (4)
 void autoAssignAircraftToProject(string selection) {
     if (selection.empty() || selection == "error") {
         return;
@@ -308,16 +317,19 @@ void autoAssignAircraftToProject(string selection) {
 
     int projectId = 0;
 	string projectName = "";
-    int requiredAircraft = 0;
+    int requiredAircraft = 0; // number of aircraft required for the project
+	int assignedCount = 0; // keeps track of how many aircraft are assigned in this run of the function
+	int assignedAircraft = 0; // number of aircraft already assigned to the project
+	int alreadyAssignedCount = 0;
     string startTime = "";
     string endTime = "";
-    vector<Aircraft> assignedAircraft;
 
 	if(projectType == 'r') {
 		ReconProject& selectedProject = reconProjects[selectedProjectIndex];
 		projectId = selectedProject.getId();
 		projectName = selectedProject.getName();
 		requiredAircraft = selectedProject.getNumOfAircraft();
+		alreadyAssignedCount = selectedProject.getAircraftList().size();
 		
 		startTime = selectedProject.getStartTime();
 		endTime = selectedProject.getEndTime();
@@ -328,9 +340,15 @@ void autoAssignAircraftToProject(string selection) {
 		projectId = selectedProject.getId();
 		projectName = selectedProject.getName();
 		requiredAircraft = selectedProject.getNumOfAircraft();
+		alreadyAssignedCount = selectedProject.getAircraftList().size();
 
 		startTime = selectedProject.getStartTime();
 		endTime = selectedProject.getEndTime();
+	}
+
+	if(requiredAircraft == alreadyAssignedCount) {
+		cout << "All required aircrafts are already assigned to the project." << endl;
+		return;
 	}
 
 
@@ -338,31 +356,31 @@ void autoAssignAircraftToProject(string selection) {
         if (!aircraft.isAvailable(startTime, endTime)) {
             continue;
         }
-		assignedAircraft.push_back(aircraft);
+		assignedCount++;
 		aircraft.assign(startTime, endTime, projectId);
-		if (assignedAircraft.size() == requiredAircraft) {
+		if(projectType == 'r') {
+			reconProjects[selectedProjectIndex].addAircraft(aircraft);
+		} 
+		else if(projectType == 'a') {
+			attackProjects[selectedProjectIndex].addAircraft(aircraft);
+		}
+
+
+		if (assignedCount == requiredAircraft) {
 			cout << endl << endl << "All " << requiredAircraft << " required aircrafts assigned to the project." << endl;
 			break;
 		}
 	}
 
-	if (assignedAircraft.size() < requiredAircraft) {
-		cout << endl << endl << "Only " << assignedAircraft.size() << " out of " << requiredAircraft << " required aircrafts assigned to the project." << endl;
+	if (assignedCount < requiredAircraft) {
+		cout << endl << endl << "Only " << assignedCount << " out of " << requiredAircraft << " required aircrafts assigned to the project." << endl;
 	} 
 	
-	if(projectType == 'r') {
-		reconProjects[selectedProjectIndex].setAircraftList(assignedAircraft);
-	} 
-	else if(projectType == 'a') {
-		attackProjects[selectedProjectIndex].setAircraftList(assignedAircraft);
-	}
-	
-	cout << "Aircrafts assigned to project " << projectName << ":" << endl;
-	printAllAircraftsInProject(assignedAircraft, projectName);
+	printAllAircraftsInProject(projectId, projectType);
     
 }
 
-
+// Function gathers information about the selected project (4)
 string getSelectedProject() {
 	string selection = ""; //selection[0] = project type (r/a), selection[1] = project index
 	char projectType;
@@ -417,7 +435,91 @@ string getSelectedProject() {
 }
 
 
-// Helper functions
+
+
+					/* Helper functions */
+
+// Function to get a valid time input from the user in the format "YYYY-MM-DD HH:MM".
+string getTime() {
+    int year = 0, month = 0, day = 0, hour = 0, minute = 0, maxDays = 0;
+
+    // 1. Validate Year
+    while (true) {
+        cout << "Enter Year (>2026): ";
+        if (cin >> year && year > 2025 && year <= 2100) {
+            break;
+        }
+        cout << "Invalid year! Please enter a year between 2026 and 2100.\n";
+    }
+
+    // 2. Validate Month
+    while (true) {
+        cout << "Enter Month (1-12): ";
+        if (cin >> month && month >= 1 && month <= 12) {
+            break;
+        }
+        cout << "Invalid month! Please enter a number between 1 and 12.\n";
+
+    }
+
+    // 3. Validate Day (Checks against month length)
+    maxDays = getDaysInMonth(month);
+    while (true) {
+        cout << "Enter Day (1-" << maxDays << "): ";
+        if (cin >> day && day >= 1 && day <= maxDays) {
+            break;
+        }
+        cout << "Invalid day for this month! Please enter a valid day.\n";
+    }
+
+    // 4. Validate Hour & Minute (HH:MM)
+    while (true) {
+        string timeStr;
+        cout << "Enter Hour (HH:MM): ";
+        cin >> timeStr;
+
+        // Ensure length and colon separator format ("HH:MM")
+        if (timeStr.length() == 5 && timeStr[2] == ':') {
+            try {
+                hour = std::stoi(timeStr.substr(0, 2)); //0-1 is the hour
+                minute = std::stoi(timeStr.substr(3, 2));//3-4 is the minute
+
+                if (hour >= 0 && hour <= 23 && minute >= 0 && minute <= 59) {
+                    break; // Valid time entered
+                }
+            } catch (...) {
+                // Catches non-numeric string conversions
+            }
+        }
+        cout << "Invalid time format! Enter time as HH:MM (e.g. 14:30 or 09:05)." << endl;
+    }
+
+    // Manual zero-padding
+    string yearStr   = std::to_string(year);
+    string monthStr  = (month < 10 ? "0" : "") + to_string(month);
+    string dayStr    = (day < 10 ? "0" : "") + to_string(day);
+    string hourStr   = (hour < 10 ? "0" : "") + to_string(hour);
+    string minStr    = (minute < 10 ? "0" : "") + to_string(minute);
+
+    // Formats into standardized "YYYY-MM-DD HH:MM"
+    return yearStr + "-" + monthStr + "-" + dayStr + " " + hourStr + ":" + minStr;
+}
+
+// Helper to get maximum valid days for a given month
+int getDaysInMonth(int month) {
+    switch (month) {
+		//April, June, September, November have 30 days
+        case 4: case 6: case 9: case 11:
+            return 30;
+		//February has 28 days (ignoring leap years for simplicity)
+        case 2:
+            return 28;
+		//All other months have 31 days
+        default:
+            return 31;
+    }
+}
+
 void printAllAircrafts() {
 	cout << endl << "Available Aircrafts:" << endl << endl;
 	for (const auto& aircraft : availableAircrafts) {
@@ -464,10 +566,26 @@ void printAllAttackProjects() {
 	cout << endl;
 }	
 
-void printAllAircraftsInProject(const vector<Aircraft>& aircraftList, const string projectName) {
-	cout << endl << "Aircrafts in Project " << projectName << ": " << endl << endl;
-	for (const auto& aircraft : aircraftList) {
-		cout << "Aircraft ID: " << aircraft.getId() << endl;
+void printAllAircraftsInProject(int projectId, char projectType) {
+	if(projectType == 'r') {
+		for (const auto& project : reconProjects) {
+			if (project.getId() == projectId) {
+				cout << endl << "Aircrafts in Reconnaissance Project " << project.getName() << ": " << endl;
+				for (const auto& aircraft : project.getAircraftList()) {
+					cout << "Aircraft ID: " << aircraft.getId() << endl;
+				}
+			}
+		}
+	} 
+	else if (projectType == 'a') {
+		for (const auto& project : attackProjects) {
+			if (project.getId() == projectId) {
+				cout << "Aircrafts in Attack Project " << project.getName() << ": " << endl << endl;
+				for (const auto& aircraft : project.getAircraftList()) {
+					cout << "Aircraft ID: " << aircraft.getId() << endl;
+				}
+			}
+		}
 	}
 	cout << endl << endl;
 }

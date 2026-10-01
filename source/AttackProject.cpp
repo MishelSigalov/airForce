@@ -1,6 +1,6 @@
 #include "AttackProject.h"
 
-int AttackProject::nextId = 0;
+int AttackProject::nextId = 2000;
 
 AttackProject::AttackProject(string name, string desc, int numOfAircraft,
                                                          string weaponry, string coordinates, string startTime, string endTime, vector<Aircraft> aircraftList)
