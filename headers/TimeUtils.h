@@ -15,6 +15,7 @@ using std::to_string;
 #define DAY_START_INDEX 8
 #define HOUR_START_INDEX 11
 #define MINUTE_START_INDEX 14
+#define TIME_DIFFERENCE_MINUTES 60
 
 #define SECONDS_IN_A_MINUTE 60
 

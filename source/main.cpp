@@ -596,17 +596,17 @@ void isOperationReady(string projectSelection) {
 	if(projectType == 'r') {
 		ReconProject& selectedProject = reconProjects[selectedProjectIndex];
 		if(selectedProject.isReady()) {
-			cout << "Reconnaissance Project " << selectedProject.getName() << " is ready for operation." << endl;
+			cout << "Reconnaissance Project " << selectedProject.getName() << " is ready for operation." << endl << endl;
 		} else {
-			cout << "Reconnaissance Project " << selectedProject.getName() << " is NOT ready for operation." << endl;
+			cout << "Reconnaissance Project " << selectedProject.getName() << " is NOT ready for operation." << endl << endl;
 		}
 	} 
 	else if(projectType == 'a') {
 		AttackProject& selectedProject = attackProjects[selectedProjectIndex];
 		if(selectedProject.isReady()) {
-			cout << "Attack Project " << selectedProject.getName() << " is ready for operation." << endl;
+			cout << "Attack Project " << selectedProject.getName() << " is ready for operation." << endl << endl;
 		} else {
-			cout << "Attack Project " << selectedProject.getName() << " is NOT ready for operation." << endl;
+			cout << "Attack Project " << selectedProject.getName() << " is NOT ready for operation." << endl << endl;
 		}
 	}
 }
