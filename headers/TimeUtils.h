@@ -38,4 +38,6 @@ namespace TimeUtils {
     // Adds hours to a given time string and returns the new time in minutes since Unix epoch
     int addHoursToTime(int timeInMinutes, int hoursToAdd);
 
+    bool isChronological(string startTime, string endTime);
+
 }

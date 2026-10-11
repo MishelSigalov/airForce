@@ -231,6 +231,7 @@ void createReconProject(char basedOnScratch) {
     int numOfAircraft = 0;
     int scratchProjectIndex = 0;
 	int maxIndex = 0;
+    bool isTimeValid = false;
     vector<Aircraft*> aircraftList;
 
     if (basedOnScratch == 'y') {
@@ -271,8 +272,12 @@ void createReconProject(char basedOnScratch) {
         cin >> camera;
         cout << "Enter flight course: ";
         cin >> flightCourse;
-		startTime = TimeUtils::getTime('s');
-		endTime = TimeUtils::getTime('e');
+		do
+        {
+            startTime = TimeUtils::getTime('s');
+		    endTime = TimeUtils::getTime('e');
+            isTimeValid = TimeUtils::isChronological(startTime, endTime);
+        } while (!isTimeValid);
 
         ReconProject newProject(name, desc, numOfAircraft, camera, flightCourse, startTime, endTime, aircraftList);
         reconProjects.push_back(newProject);
@@ -286,6 +291,7 @@ void createAttackProject(char basedOnScratch) {
 	int numOfAircraft = 0;
 	int scratchProjectIndex = 0;
 	int maxIndex = 0;
+    bool isTimeValid = false;
 	vector<Aircraft*> aircraftList;
 
 	if (basedOnScratch == 'y') {
@@ -311,6 +317,7 @@ void createAttackProject(char basedOnScratch) {
 		cin >> weaponry;
 		cout << "Enter coordinates: ";
 		cin >> coordinates;
+
 		startTime = TimeUtils::getTime('s');
 		endTime = TimeUtils::getTime('e');
 
@@ -329,8 +336,14 @@ void createAttackProject(char basedOnScratch) {
 		cin >> weaponry;
 		cout << "Enter coordinates: ";
 		cin >> coordinates;
-		startTime = TimeUtils::getTime('s');
-		endTime = TimeUtils::getTime('e');
+        do
+        {
+            startTime = TimeUtils::getTime('s');
+		    endTime = TimeUtils::getTime('e');
+            isTimeValid = TimeUtils::isChronological(startTime, endTime);
+        } while (!isTimeValid);
+        
+		
 
 		AttackProject newProject(name, desc, numOfAircraft, weaponry, coordinates, startTime, endTime, aircraftList);
 		attackProjects.push_back(newProject);

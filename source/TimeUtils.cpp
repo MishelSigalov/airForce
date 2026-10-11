@@ -136,4 +136,21 @@ namespace TimeUtils {
     int addHoursToTime(int timeInMinutes, int hoursToAdd) {
         return timeInMinutes + (hoursToAdd * 60);
     }
+
+    bool isChronological(string startTime, string endTime) {
+        int startMinutes = timeToMinutes(startTime);
+        int endMinutes = timeToMinutes(endTime);
+
+        if (startMinutes == -1 || endMinutes == -1) {
+            cout << "Error: Invalid time format." << endl << endl;
+            return false;
+        }
+
+        if (endMinutes <= startMinutes) {
+            cout << "Error: End time must be after start time." << endl << endl;
+            return false;
+        }
+
+        return true;
+    }
 }
