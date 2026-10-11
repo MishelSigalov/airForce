@@ -25,9 +25,17 @@ namespace TimeUtils {
 
     // Function to get a valid time input from the user in the format "YYYY-MM-DD HH:MM".
     string getTime(char timeType); // s for start time, e for end time
+
     // Helper to get maximum valid days for a given month
     int getDaysInMonth(int month);
+
     // Checks if the current time is at least prepHours before the start time
-    bool hasEnoughPrepTime(int prepHours, string startTimeStr); 
+    bool hasEnoughPrepTime(int prepHours, string startTimeStr);
+    
+    // Return the current time in minutes since Unix epoch, adjusted for local time
+    int getCurrentTimeInMinutes();
+
+    // Adds hours to a given time string and returns the new time in minutes since Unix epoch
+    int addHoursToTime(int timeInMinutes, int hoursToAdd);
 
 }

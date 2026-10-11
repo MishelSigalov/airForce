@@ -30,6 +30,7 @@ void autoAssignAircraftToProject(string projectSelection);
 void printAllProjectsInTimeRange(string startTime, string endTime);
 void changeTimes(string projectSelection, string newStartTime, string newEndTime);
 void isOperationReady(string projectSelection);
+void printAllUnreadyProjectsInXHours(int hoursAhead);
 
 string getSelectedProject();
 void printAllAircrafts();
@@ -99,6 +100,15 @@ int main() {
 				cout << "---------Check if a project is ready---------" << endl;
 				string projectSelection = getSelectedProject();
 				isOperationReady(projectSelection);
+				break;
+			}
+
+			case 8 : {
+				cout << "---------Get all unready projects in X hours ahead---------" << endl;
+				int hoursAhead = 0;
+				cout << "Enter the number of hours ahead to check for unready projects: ";
+				cin >> hoursAhead;
+				printAllUnreadyProjectsInXHours(hoursAhead);
 				break;
 			}
 
@@ -585,6 +595,7 @@ void changeTimes(string projectSelection, string newStartTime, string newEndTime
     }
 }
 
+// Function to check if a project is ready for operation. (7)
 void isOperationReady(string projectSelection) {
 	if (projectSelection.empty() || projectSelection == "error") {
 		return;
@@ -611,11 +622,57 @@ void isOperationReady(string projectSelection) {
 	}
 }
 
+// Function to print all unready projects within a specified number of hours ahead. (8)
+void printAllUnreadyProjectsInXHours(int hoursAhead) {
+	int currentMin = TimeUtils::getCurrentTimeInMinutes();
+	int futureMin = TimeUtils::addHoursToTime(currentMin, hoursAhead);
+	int projectStartMin = 0;
+	bool foundUnready = false;
+
+	cout << "Checking for unready projects between now and  the next" << hoursAhead << " hours..." << endl << endl;
+
+	for (const auto& project : reconProjects) {
+		if (!project.isReady()) {
+			projectStartMin = TimeUtils::timeToMinutes(project.getStartTime());
+
+			if (projectStartMin >= currentMin && projectStartMin <= futureMin) {
+				cout << "[Recon Project] ID: " << project.getId() 
+					 << " | Name: " << project.getName()
+					 << " | Time: " << project.getStartTime() << " to " << project.getEndTime() 
+					 << endl;
+				foundUnready = true;
+			}
+		}
+	}
+
+	for (const auto& project : attackProjects) {
+		if (!project.isReady()) {
+			projectStartMin = TimeUtils::timeToMinutes(project.getStartTime());
+
+			if (projectStartMin >= currentMin && projectStartMin <= futureMin) {
+				cout << "[Attack Project] ID: " << project.getId() 
+					 << " | Name: " << project.getName()
+					 << " | Time: " << project.getStartTime() << " to " << project.getEndTime() 
+					 << endl;
+				foundUnready = true;
+			}
+		}
+	}
+
+	if (!foundUnready) {
+		cout << "No unready projects found in the next " << hoursAhead << " hours.\n";
+	}
+
+	cout << endl << endl;
+}
+
+
+
 
 
 /* Helper functions */
 
-// Function gathers information about the selected project (4)
+// Function gathers information about the selected project
 string getSelectedProject() {
 	string selection = ""; //selection[0] = project type (r/a), selection[1] = project index
 	char projectType;
@@ -668,7 +725,6 @@ string getSelectedProject() {
 	selection += std::to_string(selectedProjectIndex - 1); //append the selected project index to the selection string
 	return selection;
 }
-
 
 void printAllAircrafts() {
 	cout << endl << "Available Aircrafts:" << endl << endl;

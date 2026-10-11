@@ -118,9 +118,8 @@ namespace TimeUtils {
         int startMinutes = timeToMinutes(startTimeStr);
         if (startMinutes == -1) return false;
 
-        std::time_t nowSeconds = std::time(nullptr);
 
-        int nowMinutes = static_cast<int>(nowSeconds / 60) + TIME_DIFFERENCE_MINUTES; // Adding 60 minutes (1 hour) to make it local time
+        int nowMinutes = getCurrentTimeInMinutes();
         
         int requiredBufferMinutes = prepHours * 60;
 
@@ -128,4 +127,13 @@ namespace TimeUtils {
         return (startMinutes - nowMinutes) <= requiredBufferMinutes;
     }
 
+
+    int getCurrentTimeInMinutes() {
+        std::time_t now_seconds = std::time(nullptr);
+        return static_cast<int>(now_seconds / SECONDS_IN_A_MINUTE) + TIME_DIFFERENCE_MINUTES; // Adding 60 minutes (1 hour) to make it local time
+    }
+
+    int addHoursToTime(int timeInMinutes, int hoursToAdd) {
+        return timeInMinutes + (hoursToAdd * 60);
+    }
 }
