@@ -168,8 +168,22 @@ int runMenu() {
 // Function to add an aircraft by id. (1)
 void addAircraft() {
     int id = 0;
-    cout << "Enter the aircraft ID: ";
-    cin >> id;
+    bool exists = false;
+
+    do {
+        cout << "Enter the aircraft ID: ";
+        cin >> id;
+
+        exists = false;
+        for (const auto& aircraft : availableAircrafts) {
+            if (aircraft.getId() == id) {
+                exists = true;
+                cout << "Aircraft with ID " << id << " already exists. Please try again." << endl;
+                break; // Stop searching once a match is found
+            }
+        }
+    } while (exists);
+
     Aircraft newAircraft(id);
     availableAircrafts.push_back(newAircraft);
     cout << "Aircraft with ID " << id << " added." << endl << endl;
